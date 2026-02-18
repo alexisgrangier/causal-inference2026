@@ -16,7 +16,7 @@ knitr::opts_chunk$set(fig.width=4, fig.height=3)
 # install.packages(c('tidyverse', 'here'))
 library(tidyverse)
 library(here)
-df <- readr::read_tsv("Lab 1/full_potential_outcomes.tsv")
+df <- readr::read_tsv("full_potential_outcomes.tsv")
 ```
 
 The data contains the following columns:
@@ -54,6 +54,7 @@ mean(df$y1 - df$y0)
 cor(df$t, df$y0)
 cor(df$t, df$y1)
 
+
 # We can visualize this: treated units have higher baseline potential outcomes
 df %>% ggplot(aes(x = factor(t), y = y0)) +
   geom_boxplot() +
@@ -71,6 +72,7 @@ with(df, mean(y1) - mean(y0))
 # ATC (Average treatment on control)
 mean(filter(df, t==0)$y1 - filter(df, t==0)$y0)
 with(filter(df, t==0), mean(y1) - mean(y0))
+
 
 # ATT (Average treatment on treated)
 mean(filter(df, t==1)$y1 - filter(df, t==1)$y0)
@@ -91,6 +93,7 @@ Do the next part in pairs. Prepare your work using RMarkdown.
 # Sample treatment assignment independently of potential outcomes
 set.seed(123)
 df$t_random <- sample(c(0, 1), nrow(df), replace = TRUE)
+
 
 # Create observed outcome under this new treatment assignment
 df$y_random <- ifelse(df$t_random == 1, df$y1, df$y0)
@@ -124,6 +127,7 @@ set.seed(123)
 
 df$x <- df$y0 + rnorm(nrow(df), 0, 0.5) # confounder related to baseline potential outcomes by adding noise
 df$t_confound <- ifelse(df$x > median(df$x), 1, 0)
+
 
 ## Posibility to use a probabilistic treatment assignment instead of deterministic and scale x to make it more realistic
 # df$x <- scale(df$y0 + rnorm(nrow(df), sd = 0.5))[,1]  
@@ -185,7 +189,7 @@ coef(lm(y_confound ~ t_confound + x, data=df))["t_confound"]
   
 ```{r}
 # Load the Lalonde dataset
-load("Lab 1/lalonde.RData")
+load("lalonde.RData")
 
 # Import functions from GitHub
 source("https://github.com/xuyiqing/lalonde/blob/main/tutorial/functions.R?raw=TRUE")
