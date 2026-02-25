@@ -32,7 +32,7 @@ This lab is a practical companion to the lecture. We focus on:
 - **Noncompliance** (assignment vs treatment received)
 - **Instrumental variables** (IV / Wald / 2SLS as LATE under assumptions)
 - **Attrition** (missing outcomes and what it breaks)
-- *(Optional)* **covariate adjustment for precision**
+- **Covariate adjustment for precision**
 
 We will:
 1) sketch **DAGs** for two motivating examples (Identity; Masking),
@@ -67,51 +67,22 @@ library(xtable)
 
 ---
 
-# 3) Motivating examples (DAGs only)
+# 3) Motivating example 
 
-## 3.1 Social identity and social preferences (Chen & Li 2009): DAG sketch
-
-**Simplified causal story**
-
-- `A`: random assignment to identity prime
-- `P`: psychological salience / identity activation (mechanism)
-- `Y`: pro-social behavior (e.g., allocation/choice)
-- `D`: baseline traits (pre-treatment), e.g., altruism, demographics
-
-Key idea: because `A` is randomized, `A ⟂ D`, so comparing by `A` is causal for **assignment**.
-
-```{r dag-identity}
-dag_identity <- dagitty("
-dag {
-
-  D -> Y
-  A -> P
-  P -> Y
-}
-")
-
-ggdag(dag_identity) + theme_dag()
-```
-
-**Lab note:** Regressing `Y ~ A` estimates the ITT. Regressing `Y ~ P` may be confounded because `D` might affect `P`.
-
----
-
-## 3.2 Community masking during COVID (Abaluck et al. 2022): DAG sketch
+## Community masking during COVID (Abaluck et al. 2022): DAG sketch
 
 **Simplified causal story** (cluster RCT)
 
 - `Z`: village-level assignment to mask campaign
 - `M`: mask wearing (uptake/compliance)
 - `Y`: COVID outcomes (symptoms/seroprevalence)
-- `D`: baseline risk factors / mixing patterns (pre-treatment)
+- `X`: pre-treatment covariates
 
 ```{r dag-masking}
 dag_masking <- dagitty("
 dag {
-
-
-  D -> Y
+  X -> Y
+  X -> M
   Z -> M
   M -> Y
 }
@@ -119,8 +90,6 @@ dag {
 
 ggdag(dag_masking) + theme_dag()
 ```
-
-**Lab note:** In cluster RCTs, use cluster-robust SEs and consider spillovers/interference (not covered here).
 
 ---
 
@@ -134,6 +103,7 @@ We create:
 - missing outcome indicator `R` to represent **attrition**.
 
 ```{r simulate-data}
+set.seed(123)
 n <- 3000
 
 df <- tibble(
@@ -303,7 +273,7 @@ tidy(attr_cov)
 
 ---
 
-# 10) Optional: Covariate adjustment for precision
+# 10) Covariate adjustment for precision
 
 Even with randomization, controlling for strong predictors of `Y` can improve precision.
 
