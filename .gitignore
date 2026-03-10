@@ -21,3 +21,6 @@
 *.xdv
 *.bcf
 *.run.xml
+
+# Ignore .vscode settings
+.vscode/
