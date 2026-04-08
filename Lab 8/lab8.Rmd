@@ -326,10 +326,12 @@ summary(m_iv_support_adj, diagnostics = TRUE)
 
 ```{r adjusted-comparison}
 comparison_adjusted <- data.frame(
-  estimate = c("Adjusted OLS", "Adjusted IV"),
+  estimate = c("Adjusted OLS", "Not adjusted OLS", "Adjusted IV", "Not adjusted IV"),
   value = c(
     coef(m_ols_support_adj)["watchpro"],
-    coef(m_iv_support_adj)["watchpro"]
+    coef(m_ols_support)["watchpro"],
+    coef(m_iv_support_adj)["watchpro"],
+    coef(m_iv_support)["watchpro"]
   )
 )
 
